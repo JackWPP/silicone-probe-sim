@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>硅胶探头形变与压力仿真 · Rectal RT Probe Sim</title>
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+  <div id="app">
+    <header>
+      <h1><span>ProbeSim</span> 直肠放疗硅胶柱体 · 形变 / 电阻丝 / 压力热力图</h1>
+      <div class="badge">φ26×210 mm · Three.js · LM 逆解</div>
+    </header>
+
+    <aside class="panel" id="leftPanel">
+      <h2>工作模式</h2>
+      <div class="mode-switch">
+        <button id="btnForward" class="active" type="button">正向仿真</button>
+        <button id="btnInverse" type="button">逆向求解</button>
+      </div>
+
+      <div id="forwardControls">
+        <h2>形变控制</h2>
+        <div class="control">
+          <label>弯曲程度 <b id="bendAmtVal">0.350</b></label>
+          <input id="bendAmt" type="range" min="0" max="1" step="0.001" value="0.35" />
+        </div>
+        <div class="control">
+          <label>弯曲方向 θ <b id="thetaVal">34.4°</b></label>
+          <input id="theta" type="range" min="-180" max="180" step="0.5" value="34.4" />
+        </div>
+        <div class="control">
+          <label>扭转角 φ <b id="twistVal">22.9°</b></label>
+          <input id="twist" type="range" min="-180" max="180" step="0.5" value="22.9" />
+        </div>
+        <div class="control">
+          <label>弯曲位置 <b id="bendPosVal">0.500</b></label>
+          <input id="bendPos" type="range" min="0.15" max="0.85" step="0.001" value="0.5" />
+        </div>
+      </div>
+
+      <div id="inverseControls" class="hidden">
+        <h2>输入四路 ΔR/R</h2>
+        <div class="control"><label>丝0 (0°)</label><input id="dR0" type="number" step="0.0001" value="0" /></div>
+        <div class="control"><label>丝1 (90°)</label><input id="dR1" type="number" step="0.0001" value="0" /></div>
+        <div class="control"><label>丝2 (180°)</label><input id="dR2" type="number" step="0.0001" value="0" /></div>
+        <div class="control"><label>丝3 (270°)</label><input id="dR3" type="number" step="0.0001" value="0" /></div>
+        <div class="btn-row">
+          <button class="btn primary" id="btnSolve" type="button">运行 LM 逆解</button>
+          <button class="btn" id="btnFillFromForward" type="button">用当前正向填充</button>
+        </div>
+        <p style="font-size:11px;color:var(--muted);margin:8px 0 0;">
+          算法：Levenberg–Marquardt 非线性最小二乘，含弯扭耦合与多初值。
+        </p>
+      </div>
+
+      <h2>压力区域</h2>
+      <div class="control">
+        <label>轴向位置 s <b id="pressSVal">0.550</b></label>
+        <input id="pressS" type="range" min="0.05" max="0.95" step="0.001" value="0.55" />
+      </div>
+      <div class="control">
+        <label>周向角 <b id="pressAVal">23°</b></label>
+        <input id="pressA" type="range" min="0" max="360" step="1" value="23" />
+      </div>
+      <div class="control">
+        <label>峰值强度 <b id="pressPeakVal">1.00</b></label>
+        <input id="pressPeak" type="range" min="0" max="2" step="0.01" value="1" />
+      </div>
+      <div class="control">
+        <label>轴向半宽 σ_s</label>
+        <input id="pressSigS" type="range" min="0.02" max="0.2" step="0.001" value="0.07" />
+      </div>
+      <div class="control">
+        <label>周向半宽 σ_α (°)</label>
+        <input id="pressSigA" type="range" min="5" max="90" step="1" value="26" />
+      </div>
+
+      <h2>操作</h2>
+      <div class="btn-row">
+        <button class="btn" id="btnReset" type="button">重置</button>
+        <button class="btn" id="btnScreenshot" type="button">截图</button>
+        <button class="btn primary" id="btnDemoInverse" type="button">正向→逆解演示</button>
+        <button class="btn" id="btnValidate" type="button">运行验证测试</button>
+      </div>
+      <div id="validationOut">点击「运行验证测试」输出误差统计…</div>
+    </aside>
+
+    <main id="viewport">
+      <div id="hud">拖拽旋转 · 滚轮缩放 · 右键平移<br />红/绿/蓝/黄 = 四路电阻丝 (0°/90°/180°/270°)</div>
+    </main>
+
+    <aside class="panel right">
+      <h2>四路电阻</h2>
+      <div class="wire-card" id="wire0"><div class="dot" style="background:var(--wire0)"></div><div class="name">丝0 · 0°</div><div class="val">—</div></div>
+      <div class="wire-card" id="wire1"><div class="dot" style="background:var(--wire1)"></div><div class="name">丝1 · 90°</div><div class="val">—</div></div>
+      <div class="wire-card" id="wire2"><div class="dot" style="background:var(--wire2)"></div><div class="name">丝2 · 180°</div><div class="val">—</div></div>
+      <div class="wire-card" id="wire3"><div class="dot" style="background:var(--wire3)"></div><div class="name">丝3 · 270°</div><div class="val">—</div></div>
+
+      <h2>压力统计</h2>
+      <div class="kv">
+        <span>最大压力</span><b id="pMax">—</b>
+        <span>平均压力</span><b id="pMean">—</b>
+        <span>覆盖面积</span><b id="pArea">—</b>
+        <span>压力中心</span><b id="pCenter">—</b>
+      </div>
+
+      <h2>设定 vs 逆解</h2>
+      <div class="compare" id="compareBox">—</div>
+
+      <h2>说明</h2>
+      <p style="font-size:11px;color:var(--muted);line-height:1.5;margin:0;">
+        正向：形变参数 → 几何弧长应变 + 扭转反对称/共同模 + 弯扭耦合 → ΔR/R = GF·ε。<br /><br />
+        逆向：对四路测量做 LM 优化，估计弯曲量、方位、扭转与弯曲位置。详见 <code>ARCHITECTURE.md</code>。
+      </p>
+    </aside>
+  </div>
+
+  <!-- Three.js r128 + OrbitControls（全局构建，无需打包） -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+  <script src="js/physics.js"></script>
+  <script src="js/geometry3d.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>

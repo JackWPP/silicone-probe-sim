@@ -1,0 +1,100 @@
+{
+  "round1": {
+    "params": {
+      "GF": 2.4,
+      "kappaMax": 0.0125,
+      "twistAsym": 0.02,
+      "coupleBeta": 0.3,
+      "bendHalfWidth": 0.22,
+      "twistCommon": 0.004,
+      "regBend": 0.00001,
+      "regTwist": 0.00001,
+      "regPos": 0.0001
+    },
+    "metrics": {
+      "meanAbsBend": 0.0026,
+      "rmseBend": 0.0098,
+      "meanAbsThetaDeg": 0.18,
+      "rmseThetaDeg": 0.76,
+      "meanAbsTwistDeg": 0.18,
+      "rmseTwistDeg": 0.58,
+      "meanAbsPos": 0.0139,
+      "meanResidual": 0.000755
+    }
+  },
+  "tunedParams": {
+    "GF": 2.6,
+    "twistAsym": 0.015,
+    "coupleBeta": 0.2,
+    "twistCommon": 0.008,
+    "bendHalfWidth": 0.2
+  },
+  "round2": {
+    "params": {
+      "GF": 2.6,
+      "kappaMax": 0.0125,
+      "twistAsym": 0.015,
+      "coupleBeta": 0.2,
+      "bendHalfWidth": 0.2,
+      "twistCommon": 0.008,
+      "regBend": 0.00001,
+      "regTwist": 0.00001,
+      "regPos": 0.0001
+    },
+    "metrics": {
+      "meanAbsBend": 0.0023,
+      "rmseBend": 0.0086,
+      "meanAbsThetaDeg": 0.23,
+      "rmseThetaDeg": 0.83,
+      "meanAbsTwistDeg": 0.09,
+      "rmseTwistDeg": 0.22,
+      "meanAbsPos": 0.0143,
+      "meanResidual": 0.000753
+    }
+  },
+  "failCountRound2": 0,
+  "samples": [
+    {
+      "name": "pure_bend_a0.2_th0",
+      "eBend": 0,
+      "eThDeg": 0,
+      "eTwDeg": 0,
+      "ePos": 0.0002
+    },
+    {
+      "name": "pure_bend_a0.5_th0",
+      "eBend": 0.0001,
+      "eThDeg": 0,
+      "eTwDeg": 0,
+      "ePos": 0.0009
+    },
+    {
+      "name": "pure_bend_a0.8_th0",
+      "eBend": 0.0002,
+      "eThDeg": 0,
+      "eTwDeg": 0,
+      "ePos": 0.0022
+    },
+    {
+      "name": "pure_twist_0.3",
+      "eBend": 0,
+      "eThDeg": 0,
+      "eTwDeg": 0.02,
+      "ePos": 0
+    },
+    {
+      "name": "combo_0",
+      "eBend": 0.0001,
+      "eThDeg": 0.05,
+      "eTwDeg": 0.06,
+      "ePos": 0.0006
+    },
+    {
+      "name": "combo_5",
+      "eBend": 0.0001,
+      "eThDeg": 0,
+      "eTwDeg": 0.06,
+      "ePos": 0.0005
+    }
+  ]
+}
